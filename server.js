@@ -2,16 +2,16 @@ const express = require("express");
 const fs = require("fs");
 
 const app = express();
-const PORT = process.env.PORT || 8880; // Usa la porta assegnata da Railway o 8880 come fallback
+const PORT = process.env.PORT || 8080; // Railway assegna la porta 8080
 
 app.use(express.json({ limit: "10mb" }));
 
-// ✅ Route per la homepage (per evitare l'errore "Not Found")
+// ✅ Route per verificare che il server sia attivo
 app.get("/", (req, res) => {
     res.send("✅ Server attivo su Railway!");
 });
 
-// ✅ Route per ricevere lo screenshot e salvarlo
+// ✅ Route per caricare e salvare uno screenshot
 app.post("/upload", (req, res) => {
     if (!req.body.image) {
         return res.status(400).send("❌ Nessuna immagine ricevuta.");
@@ -21,14 +21,14 @@ app.post("/upload", (req, res) => {
     fs.writeFile("screenshot.png", imageData, "base64", (err) => {
         if (err) {
             console.error("❌ Errore nel salvataggio:", err);
-            return res.status(500).send("❌ Errore nel salvataggio dell'immagine.");
+            return res.status(500).send("❌ Errore nel salvataggio.");
         }
         console.log("✅ Screenshot salvato con successo!");
         res.send("✅ Screenshot salvato!");
     });
 });
 
-// ✅ Route per visualizzare lo screenshot salvato
+// ✅ Route per visualizzare lo screenshot
 app.get("/screenshot", (req, res) => {
     res.sendFile(__dirname + "/screenshot.png");
 });
